@@ -1,0 +1,84 @@
+﻿<h1>Customer list</h1>
+<div id="jqxgrid">
+</div>
+
+@*Jquery link*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+
+    var Index = {};
+    var jqxGrid = "#jqxgrid";
+    (function (index) {
+
+        // get data from controller
+        index.Initialize = function () {
+            $.ajax({
+                url: '@Url.Action("GetCustomers")',
+                dataType: 'json',
+                type: 'Get',
+                success: function (data) {
+                    index.ShowData(data);
+                }, error: function (err) {
+
+                }
+            });
+        }
+
+        //display data into grid
+        index.ShowData = function (data) {
+            console.log("data to show " + data);
+
+            // set up the data source for the grid
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'id' },
+                    { name: 'name' },
+                    { name: 'age' },
+                    { name: 'gender' },
+                ],
+                localdata: data
+            };
+
+            // add source to dataAdapter
+            var dataAdapter = new $.jqx.dataAdapter(source);
+
+            //grid setup
+            $(jqxGrid).jqxGrid({
+                columnsresize: true,
+                source: dataAdapter,
+                filterable: true,
+                sortable: true,
+                pageable: true,
+                autoshowfiltericon: true,
+                theme: 'darkblue',
+                editable: true,
+                width: 800,
+                pagesizeoptions: ['10', '20', '40', '60'],
+                columns: [
+                    { text: 'ID', datafield: 'id', width: 200 },
+                    { text: 'Name', datafield: 'name', width: 200 },
+                    { text: 'Age', datafield: 'age', width: 200 },
+                    { text: 'Gender', datafield: 'gender', width: 200 },
+                ]
+            });
+        }
+
+    }(Index));
+
+    $(document).ready(function () {
+        Index.Initialize();
+    });
+
+
+
+    /*    
+     *    All i need for the grid
+     *    Packages in wwwroot
+     *    package source in _layout.cshtml
+     *    data in CustomerController
+     *    Grid here in view
+     *         
+     * */
+</script>
